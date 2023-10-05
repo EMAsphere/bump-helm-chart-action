@@ -6,7 +6,7 @@ branding:
 inputs:
   app_version:
     description: to also bump app-version
-    default: "true"
+    default: "false"
     required: false
   level:
     description: patch/minor/major
@@ -16,24 +16,26 @@ inputs:
     required: true
 outputs:
   chart:
-    description: "Chart name"    
+    description: "Chart name"
     value: ${{ steps.chart-name.outputs.chart }}
 runs:
   using: "composite"
   steps:
     - name: Install PyBump
       run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-dev
         python3 -m pip install pybump
       shell: bash
     - name: Automated Version Bump
       id: version-bump
       run: |
-        if [[ ${{ fromJSON(inputs.app_version) }} ]]
+        if [[ ${{ fromJSON(inputs.app_version) }} != "false" ]]
         then
           pybump bump --file ${{ inputs.chart-path }}/Chart.yaml --level ${{ inputs.level }} --app-version
-        fi        
+        fi
         pybump bump --file ${{ inputs.chart-path }}/Chart.yaml --level ${{ inputs.level }}
-      shell: bash        
+      shell: bash
     - name: Output Name
       id: chart-name
       run: |
