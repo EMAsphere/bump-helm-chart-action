@@ -39,5 +39,5 @@ runs:
     - name: Output Name
       id: chart-name
       run: |
-        echo "::set-output name=chart::$(basename ${{ inputs.chart-path }})"
+        echo "chart=$(basename ${{ inputs.chart-path }})" >> $GITHUB_ENV
       shell: bash
